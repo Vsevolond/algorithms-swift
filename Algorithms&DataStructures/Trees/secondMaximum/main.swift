@@ -1,0 +1,96 @@
+//
+//  main.swift
+//  secondMaximum
+//
+//  Created by Всеволод on 02.06.2023.
+//
+
+import Foundation
+
+class Node {
+    var value: Int
+    var parent: Node?
+    var left: Node?
+    var right: Node?
+    
+    init(value: Int, parent: Node? = nil, left: Node? = nil, right: Node? = nil) {
+        self.value = value
+        self.parent = parent
+        self.left = left
+        self.right = right
+    }
+}
+
+class Tree {
+    var root: Node?
+    
+    func add(number: Int) {
+        let newNode = Node(value: number)
+        
+        guard root != nil else {
+            root = newNode
+            return
+        }
+        
+        add(in: root, newNode: newNode)
+    }
+    
+    private func add(in currNode: Node?, newNode: Node) {
+        guard let value = currNode?.value else {
+            return
+        }
+        
+        if newNode.value < value {
+            if currNode?.left == nil {
+                newNode.parent = currNode
+                currNode?.left = newNode
+            } else {
+                add(in: currNode?.left, newNode: newNode)
+            }
+        } else if newNode.value > value {
+            if currNode?.right == nil {
+                newNode.parent = currNode
+                currNode?.right = newNode
+            } else {
+                add(in: currNode?.right, newNode: newNode)
+            }
+        } else {
+            return
+        }
+    }
+    
+    private func max(in root: Node?) -> Node? {
+        var node = root
+        while node?.right != nil {
+            node = node?.right
+        }
+        
+        return node
+    }
+    
+    func secondMax() -> Int? {
+        let node = max(in: root)
+        
+        if node?.left != nil {
+            return max(in: node?.left)?.value
+        } else {
+            return node?.parent?.value
+        }
+    }
+}
+
+var array = readLine()!.split(separator: " ").map { Int($0)! }
+array.removeLast()
+
+let tree = Tree()
+
+array.forEach { x in
+    tree.add(number: x)
+}
+
+guard let max = tree.secondMax() else {
+    exit(0)
+}
+
+print(max)
+
