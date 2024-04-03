@@ -7,7 +7,7 @@
 
 import Foundation
 
-let fileName = "/Users/sevadonchenko/Algorithms_DataStructures_Swift/Algorithms&DataStructures/Dict/sales/input.txt"
+let fileName = "/Users/vsevolond/Algorithms_DataStructures_Swift/Algorithms&DataStructures/Dict/sales/input.txt"
 
 func readFromFile() -> [String] {
     guard let text = try? String(contentsOfFile: fileName) else {
@@ -34,38 +34,42 @@ func lbinsearch(left: Int, right: Int, check: (Int) -> Bool) -> Int {
 }
 
 struct SortedArray<Element: Comparable> {
+    
     var items: [Element] = []
+    
     mutating func append(_ item: Element) {
         let index = lbinsearch(left: 0, right: items.count) { mid in
             return items[mid] > item
         }
+        
         items.insert(item, at: index)
     }
 }
 
-struct Sales {
+struct Products {
     
-    struct Products {
-        var items = SortedArray<String>()
-        var countOfItem = [String: Int]()
-        
-        init(firstProduct: String, count: Int) {
-            addProduct(name: firstProduct, count: count)
-        }
-        
-        mutating func addProduct(name: String, count: Int) {
-            if let existCount = countOfItem[name] {
-                countOfItem.updateValue(existCount + count, forKey: name)
-            } else {
-                items.append(name)
-                countOfItem[name] = count
-            }
-        }
-        
-        func getCountOfProduct(by name: String) -> Int {
-            return countOfItem[name]!
+    var items = SortedArray<String>()
+    var countOfItem = [String: Int]()
+    
+    init(firstProduct: String, count: Int) {
+        addProduct(name: firstProduct, count: count)
+    }
+    
+    mutating func addProduct(name: String, count: Int) {
+        if let existCount = countOfItem[name] {
+            countOfItem.updateValue(existCount + count, forKey: name)
+        } else {
+            items.append(name)
+            countOfItem[name] = count
         }
     }
+    
+    func getCountOfProduct(by name: String) -> Int {
+        return countOfItem[name]!
+    }
+}
+
+struct Sales {
     
     var users = SortedArray<String>()
     var userProducts = [String: Products]()
@@ -83,8 +87,7 @@ struct Sales {
         let products = userProducts[user]!
         for name in products.items.items {
             let count = products.getCountOfProduct(by: name)
-            print(name, terminator: " ")
-            print(count, terminator: "\n")
+            print(name, count, separator: " ", terminator: "\n")
         }
     }
     
